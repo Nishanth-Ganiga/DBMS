@@ -1,0 +1,62 @@
+create table con(cons_id number(20) primary key,csname varchar(20),csstate varchar(20),no_of_voters number(10));
+ insert into con values(111,'Jayanagar','Karnataka',4);
+
+create table party(pid number(20),pname varchar2(20),psymbol varchar2(20);
+insert into party values(001,'Bjp','Lotus');
+
+create table can(cand_id number(12) primary key,phone_no number(10),age number(2),state varchar(20),name varchar(20),pid int references party(pid));
+ insert into can values(91,7261435272,23,'Kerala','Varun',001);
+
+create table contest(cons_id number(20),cand_id number(12),foreign key(cons_id) references con(cons_id),foreign key(cand_id) references can(cand_id));
+insert into contest values(222,92);
+
+create table voter(vid number(20) primary key,vname varchar(20),vage number(5),vaddr varchar(20),cons_id number(20) references con(cons_id),cand_id number(12) references can(cand_id));
+insert into voter values(52,'sanesh',17,'Kerala',222,91);
+
+Queries:
+1. select * from can where cand_id in(select cand_id from contest join con on contest.cons_id=con.cons_id group by cand_id having count(distinct(csstate))>1);
+
+2. select csstate from con group by csstate having count(csstate) in (select max(count(csstate)) from con group by csstate);
+
+3. create or replace procedure agechecking ( id in number,age in number)
+as
+BEGIN
+if age>18 then
+insert into voter(vid,vage) values (id,age);
+else
+dbms_output.put_line('age should be high');
+end if;
+end agechecking;
+/
+set serveroutput on;
+exec agechecking (25,21);
+exec agechecking(20,15);
+
+4. create or replace procedure display_count
+(
+const_id in number
+)
+as
+begin
+vid con.cons_id % type;
+begin
+select no_of_voters into vid from con where cons_id=const_id and rownum=1;
+dbms_output.put_line('total voters are:' || vid);
+end;
+/
+select * from con;
+exec display_count(111);
+
+5. create or replace trigger count
+after insert on voter
+for each row
+begin
+update constituency
+set no_of_voters = no_of_voters + 1
+where cons_id=:new.cons_id;
+end count;
+/
+set serveroutput on;
+select * from constituency;
+
+

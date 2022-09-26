@@ -1,0 +1,22 @@
+create table tourist(tid varchar(10)primary key,tname varchar(10),age int,country varchar(10));
+
+insert into tourist values('t1','Varun',22,'India');
+
+create table t_place(tpid varchar(10)primary key,tpname varchar(10),km int,state varchar(10),history varchar(10));
+
+insert into t_place values('tp1','Goa',700,'Goa','Beach');
+
+create table visit(tid varchar(10),tpid varchar(10),vdate varchar(20),foreign key(tid) references tourist(tid),foreign key(tpid) references t_place(tpid));
+
+insert into visit values('t1','tp1','12-Jul-20');
+
+Queries:
+1. select state from t_place group by state having count(state)=(select max(count(state)) from t_place group by state);
+
+2. select * from t_place where tpid in(select tpid from visit group by tpid having count(tpid)=(select max(count(tpid)) from visit group by tpid));
+
+3.  select * from tourist t where t.tid in(select tid from visit join t_place on visit.tpid=t_place.tpid where state='Karnataka' group by tid having count(state) in (select count(state) from t_place where state='Karnataka'));
+
+4. select * from tourist t where t.tid in(select tid from visit join t_place on visit.tpid=t_place.tpid group by tid having count(distinct state) in (select count(distinct state) from t_place));
+
+5.  select * from t_place where tpid in (select tpid from visit join tourist on visit.tid = tourist.tid group by tpid having count(distinct country) in (select count(distinct country) from tourist));

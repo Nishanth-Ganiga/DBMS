@@ -1,0 +1,40 @@
+create table branch(branchid int primary key,bname varchar(10),hod varchar(10));
+insert into branch values(1,'mca','npk');
+
+create table student(usn varchar(10) primary key,name varchar(10),addr varchar(15),branchid int references branch(branchid),sem int);
+insert into student values('1rn1','Harish','Banglore',1,2);
+
+create table author(authorid int primary key,aname varchar(10),country varchar(10),age int);
+insert into author values(123,'Navathe','India',55);
+
+create table book(bookid int primary key,bname varchar(10),authorid int references author(authorid),publisher varchar(10),branchid int references branch(branchid));
+insert into book values(1111,'C',123,'pearson',1);
+
+create table borrow(usn varchar(10) references student(usn),bookid int references book(bookid),borrowdate date);
+insert into borrow values('1rn1',2222,'10-Jan-00');
+
+Queries:
+1. select * from student where sem=2 and branchid in(select branchid from branch where bname='mca');
+
+2. select * from student where usn not in(select usn from borrow);
+
+3. select student.usn ,student.name,branch.bname, book.bname, aname, borrowdate from student ,
+branch, book, author, borrow where student.usn=borrow.usn and borrow.bookid=book.bookid and
+book.authorid =author.authorid and student.branchid=branch.branchid and student.sem=2 and
+branch.bname='mca';
+
+4. select count(*) , authorid from book group by authorid;
+
+5. select * from student where usn in ( select usn from borrow group by usn having count(usn) >=2);
+
+6. select * from student s where exists(select br.usn from borrow br,book bk where br.book_id=bk.book_id and br.usn=s.usn group by usn having count(distinct author_id)>1);
+
+7. select * from book order by book_name desc;
+
+8. select * from student s where exists (select usn , publisher from borrow join book on
+borrow.bookid=book.bookid where s.usn=borrow.usn group by usn having count(distinct publisher)=1);
+
+
+
+
+

@@ -1,0 +1,19 @@
+CREATE TABLE Student(USN VARCHAR(8),NAME VARCHAR(6),DOB DATE,BRANCH CHAR,M1 int,M2 int,M3 int,TOTAL int,gpa float);
+insert into student values('1BIMCA01','swetha','1980-03-14','IS',8,8,9,null,NULL);
+
+Queries:
+1. update student set total =m1+m2+m3;
+
+2. UPDATE Student SET GPA=(m1+m2+m3/3)-1;
+
+3. select usn, name,dob from student where dob like'%80%';
+
+4. select branch,count(*) from student group by branch;
+
+5. select branch,max(gpa) from student group by branch;
+
+6. SELECT NAME FROM student WHERE NAME LIKE 's%';
+
+7. SELECT NAME FROM Student WHERE NAME LIKE '%ar';
+
+8. delete from s1 where usn='1BIMCA01';
